@@ -47,13 +47,13 @@ $$(document).on(
   '.page[data-name="listbarang"]',
   function (e, page) {
     // const el = page.$el;
-    app.request.json("http://localhost:8080/projek/barang/baca.php", (data) => {
+    app.request.json("http://localhost/projek/barang/baca.php", (data) => {
       const listBarang = data.map(
         (barang) => `
       <div class="card demo-card-header-pic">
         <div style="background-image:url(microphone.jpg)" class="card-header align-items-flex-end"></div>
           <div class="card-content card-content-padding">
-            <p class="date">124 Buah</p>
+            <p>${barang.stok}</p>
             <p>${barang.nama_barang}</p>
             <p>Rp. ${barang.harga}</p>
           </div>
@@ -63,6 +63,34 @@ $$(document).on(
       );
 
       $$(".listbarang-container").html(listBarang);
+    });
+  }
+);
+
+$$(document).on(
+  "page:init",
+  '.page[data-name="keranjang"]',
+  function (e, page) {
+    // const el = page.$el;
+    app.request.json("http://localhost/projek/keranjang/load.php", (data) => {
+      const listKeranjang = data.map(
+        (keranjang) => `
+        <li>
+        <a href="#" class="item-link item-content">
+            <div class="item-media"><img src="88-1.jpg" width="80" /></div>
+            <div class="item-inner">
+                <div class="item-title-row">
+                    <div class="item-title">${keranjang.nama_barang}</div>
+                </div>
+                <div class="item-subtitle">${keranjang.qty}</div>
+                <div class="item-text">${keranjang.total_sub}</div>
+            </div>
+        </a>
+    </li>
+    `
+      );
+
+      $$("#keranjang").html(listKeranjang);
     });
   }
 );
