@@ -47,17 +47,17 @@ $$(document).on(
   '.page[data-name="listbarang"]',
   function (e, page) {
     // const el = page.$el;
-    app.request.json("http://localhost/projek/barang/baca.php", (data) => {
+    app.request.json("http://localhost:8080/projek/barang/baca.php", (data) => {
       const listBarang = data.map(
         (barang) => `
       <div class="card demo-card-header-pic">
         <div style="background-image:url(microphone.jpg)" class="card-header align-items-flex-end"></div>
-          <div class="card-content card-content-padding">
+          <div class="card-content card-content-padding" id="dataBarang" >
             <p>${barang.stok}</p>
             <p>${barang.nama_barang}</p>
             <p>Rp. ${barang.harga}</p>
           </div>
-        <div class="card-footer"><a href="#" class="link">Tambah ke keranjang</a></div>
+        <div class="card-footer" id="tambah" ><a href="#" class="link" data-namaBarang="${barang.nama_barang}" data-id="${barang.id_barang}"  data-stok="${barang.stok}" data-harga="${barang.harga}">Tambah ke keranjang</a></div>
       </div>
     `
       );
@@ -72,9 +72,11 @@ $$(document).on(
   '.page[data-name="keranjang"]',
   function (e, page) {
     // const el = page.$el;
-    app.request.json("http://localhost/projek/keranjang/load.php", (data) => {
-      const listKeranjang = data.map(
-        (keranjang) => `
+    app.request.json(
+      "http://localhost:8080/projek/keranjang/load.php",
+      (data) => {
+        const listKeranjang = data.map(
+          (keranjang) => `
         <li>
         <a href="#" class="item-link item-content">
             <div class="item-media"><img src="88-1.jpg" width="80" /></div>
@@ -88,9 +90,27 @@ $$(document).on(
         </a>
     </li>
     `
-      );
+        );
 
-      $$("#keranjang").html(listKeranjang);
-    });
+        $$("#keranjang").html(listKeranjang);
+      }
+    );
   }
 );
+
+$$(".view-main").on("click", "#tambah", (e) => {
+  const dataBarang = $$(e.srcElement).dataset();
+
+  app.request({
+    url: "http://localhost:8080/projek/keranjang/simpan.php",
+    type: "POST",
+    data: {
+      id_barang: dataBarang.id,
+      id_pelanggan: "P0001",
+      qty: 1,
+      total_sub: `Rp. ${dataBarang.harga}`,
+      nama_barang: dataBarang.namabarang,
+    },
+    dataType: "json",
+  });
+});
