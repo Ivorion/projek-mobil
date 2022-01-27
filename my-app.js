@@ -16,14 +16,6 @@ app = new Framework7({
       url: "pages/pelanggan.html",
     },
     {
-      path: "/tambah/",
-      url: "/pages/tambah.html",
-    },
-    {
-      path: "/ubah/",
-      url: "/pages/ubah.html",
-    },
-    {
       path: "/listbarang/",
       url: "/pages/listbarang.html",
     },
@@ -34,6 +26,10 @@ app = new Framework7({
     {
       path: "/menu/",
       url: "/pages/menu.html",
+    },
+    {
+      path: "/petugas/",
+      url: "/pages/petugas.html",
     },
   ],
   // ... other parameters
@@ -62,7 +58,7 @@ $$(document).on(
     `
       );
 
-      $$(".listbarang-container").html(listBarang);
+      $$(".listbarang-container").html(listBarang.join(""));
     });
   }
 );
@@ -92,11 +88,31 @@ $$(document).on(
     `
         );
 
-        $$("#keranjang").html(listKeranjang);
+        $$("#keranjang").html(listKeranjang.join(""));
       }
     );
   }
 );
+
+// Petugas
+$$(document).on("page:init", '.page[data-name="petugas"]', function (e, page) {
+  // const el = page.$el;
+  app.request.json("http://localhost:8080/projek/petugas/baca.php", (data) => {
+    const listpetugas = data.map(
+      (petugas) => `
+          <li>
+          <a href="#" class="item-link item-content">
+              <div class="item-inner">
+                  <div class="item-title">${petugas.nama_petugas}</div>
+              </div>
+          </a>
+      </li>
+    `
+    );
+
+    $$("#petugas").html(listpetugas.join(""));
+  });
+});
 
 $$(".view-main").on("click", "#tambah", (e) => {
   const dataBarang = $$(e.srcElement).dataset();
